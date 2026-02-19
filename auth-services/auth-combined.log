@@ -1,3 +1,11 @@
 {"level":"error","message":"\nInvalid `prisma.user.findUnique()` invocation in\n/Users/suyash/ecommerce-microservices/auth-services/src/controllers/authController.js:15:44\n\n  12 const register = async (req, res) => {\n  13   try {\n  14     const { email, password } = req.body;\n→ 15     const existingUser = await prisma.user.findUnique(\nDatabase `suyash` does not exist on the database server","timestamp":"2026-02-18T06:10:19.653Z"}
 {"level":"info","message":"User registered: ba1b7fe3-475f-4a70-af32-964adfe09fda (suyash@example.com)","timestamp":"2026-02-18T06:37:24.686Z"}
 {"level":"info","message":"User logged in: ba1b7fe3-475f-4a70-af32-964adfe09fda (suyash@example.com)","timestamp":"2026-02-18T06:40:22.581Z"}
+{"level":"info","message":"User logged in: ba1b7fe3-475f-4a70-af32-964adfe09fda (suyash@example.com)","timestamp":"2026-02-18T09:28:02.807Z"}
+{"level":"error","message":"request aborted","timestamp":"2026-02-18T09:36:43.832Z"}
+{"level":"info","message":"User logged in: ba1b7fe3-475f-4a70-af32-964adfe09fda (suyash@example.com)","timestamp":"2026-02-18T09:37:56.647Z"}
+{"level":"info","message":"User logged in: ba1b7fe3-475f-4a70-af32-964adfe09fda (suyash@example.com)","timestamp":"2026-02-18T09:37:59.267Z"}
+{"level":"info","message":"User logged in: ba1b7fe3-475f-4a70-af32-964adfe09fda (suyash@example.com)","timestamp":"2026-02-18T09:43:19.194Z"}
+{"level":"error","message":"request aborted","timestamp":"2026-02-18T09:57:50.422Z"}
+{"level":"error","message":"request aborted","timestamp":"2026-02-18T09:59:19.939Z"}
+{"level":"info","message":"User logged in: ba1b7fe3-475f-4a70-af32-964adfe09fda (suyash@example.com)","timestamp":"2026-02-18T10:13:35.881Z"}

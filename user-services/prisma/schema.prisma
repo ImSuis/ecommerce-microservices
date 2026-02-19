@@ -1,0 +1,31 @@
+generator client {
+  provider   = "prisma-client-js"
+  engineType = "library"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Profile {
+  userId    String   @id
+  name      String?
+  phone     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  addresses Address[]
+}
+
+model Address {
+  id        String   @id @default(uuid())
+  profileId String
+  street    String
+  city      String
+  country   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+
+  profile   Profile  @relation(fields: [profileId], references: [userId], onDelete: Cascade)
+}

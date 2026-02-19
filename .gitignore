@@ -1,0 +1,7 @@
+plain.md
+api-gateway/node_modules
+auth-services/node_modules
+api-gateway/.env
+user-services/node_modules
+user-services/.env
+.DS_Store

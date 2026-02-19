@@ -1,12 +1,11 @@
 generator client {
   provider = "prisma-client-js"
-  engineType    = "library"  // or "binary" — not "client"
+  engineType    = "library"  
 
 }
 
 datasource db {
   provider = "postgresql"
-
 }
 
 model User {
