@@ -1,0 +1,16 @@
+{"level":"info","message":"Connected to Redis","timestamp":"2026-02-20T04:03:50.891Z"}
+{"level":"info","message":"Cart fetched for user: ba1b7fe3-475f-4a70-af32-964adfe09fda","timestamp":"2026-02-20T04:06:22.562Z"}
+{"level":"info","message":"Item added to cart for user: ba1b7fe3-475f-4a70-af32-964adfe09fda, productId: 92a12bd2-0c85-4861-b6a0-2fb144f51fde","timestamp":"2026-02-20T04:08:28.226Z"}
+{"level":"info","message":"Cart fetched for user: ba1b7fe3-475f-4a70-af32-964adfe09fda","timestamp":"2026-02-20T04:08:38.584Z"}
+{"level":"info","message":"Cart updated for user: ba1b7fe3-475f-4a70-af32-964adfe09fda, productId: 92a12bd2-0c85-4861-b6a0-2fb144f51fde, quantity: 5","timestamp":"2026-02-20T04:13:08.630Z"}
+{"level":"info","message":"Cart fetched for user: ba1b7fe3-475f-4a70-af32-964adfe09fda","timestamp":"2026-02-20T04:13:13.207Z"}
+{"level":"info","message":"Item added to cart for user: ba1b7fe3-475f-4a70-af32-964adfe09fda, productId: 5a4df25e-aee3-4bd2-85aa-ba8dcbf1bbf9","timestamp":"2026-02-20T04:19:05.578Z"}
+{"level":"info","message":"Item removed from cart for user: ba1b7fe3-475f-4a70-af32-964adfe09fda, productId: 92a12bd2-0c85-4861-b6a0-2fb144f51f","timestamp":"2026-02-20T04:20:31.836Z"}
+{"level":"info","message":"Item removed from cart for user: ba1b7fe3-475f-4a70-af32-964adfe09fda, productId: 92a12bd2-0c85-4861-b6a0-2fb144f51f","timestamp":"2026-02-20T04:22:05.404Z"}
+{"level":"info","message":"Item removed from cart for user: ba1b7fe3-475f-4a70-af32-964adfe09fda, productId: 92a12bd2-0c85-4861-b6a0-2fb144f51f","timestamp":"2026-02-20T04:22:06.703Z"}
+{"level":"info","message":"Item removed from cart for user: ba1b7fe3-475f-4a70-af32-964adfe09fda, productId: 92a12bd2-0","timestamp":"2026-02-20T04:22:55.367Z"}
+{"level":"info","message":"Item removed from cart for user: ba1b7fe3-475f-4a70-af32-964adfe09fda, productId: 92a12bd2-0c85-4861-b6a0-2fb144f51fde","timestamp":"2026-02-20T04:23:04.588Z"}
+{"level":"info","message":"Cart cleared for user: ba1b7fe3-475f-4a70-af32-964adfe09fda","timestamp":"2026-02-20T04:23:58.453Z"}
+{"level":"info","message":"Cart fetched for user: ba1b7fe3-475f-4a70-af32-964adfe09fda","timestamp":"2026-02-20T04:24:04.323Z"}
+{"level":"info","message":"Connected to Redis","timestamp":"2026-02-20T04:26:35.400Z"}
+{"level":"info","message":"Item added to cart for user: ba1b7fe3-475f-4a70-af32-964adfe09fda, productId: 5a4df25e-aee3-4bd2-85aa-ba8dcbf1bbf9","timestamp":"2026-02-20T04:27:01.834Z"}

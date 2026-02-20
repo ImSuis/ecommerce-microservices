@@ -7,3 +7,5 @@ user-services/.env
 .DS_Store
 product-services/node_modules
 product-services/.env
+cart-services/node_modules
+cart-services/.env

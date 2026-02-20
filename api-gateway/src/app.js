@@ -76,6 +76,25 @@ app.use(
   })
 );
 
+app.use(
+  '/api/cart',
+  proxy({
+    target: process.env.CART_SERVICE_URL || 'http://localhost:4004',
+    changeOrigin: true,
+    pathRewrite: (path) => `/api/cart${path}`,
+    on: {
+      proxyReq: (proxyReq, req) => {
+        if (req.headers.authorization) {
+          proxyReq.setHeader('Authorization', req.headers.authorization);
+        }
+      },
+      error: (err, req, res) => {
+        console.error('Proxy error:', err);
+        res.status(502).json({ message: 'Proxy error', error: err.message });
+      },
+    },
+  })
+);
 
 app.get('/', (req, res) => res.send('API Gateway is running'));
 
