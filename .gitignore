@@ -5,3 +5,5 @@ api-gateway/.env
 user-services/node_modules
 user-services/.env
 .DS_Store
+product-services/node_modules
+product-services/.env

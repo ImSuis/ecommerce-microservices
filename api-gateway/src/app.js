@@ -56,6 +56,27 @@ app.use(
   })
 );
 
+app.use(
+  '/api/products',
+  proxy({
+    target: process.env.PRODUCT_SERVICE_URL || 'http://localhost:4003',
+    changeOrigin: true,
+    pathRewrite: (path) => `/api/products${path}`,
+    on: {
+      proxyReq: (proxyReq, req) => {
+        if (req.headers.authorization) {
+          proxyReq.setHeader('Authorization', req.headers.authorization);
+        }
+      },
+      error: (err, req, res) => {
+        console.error('Proxy error:', err);
+        res.status(502).json({ message: 'Proxy error', error: err.message });
+      },
+    },
+  })
+);
+
+
 app.get('/', (req, res) => res.send('API Gateway is running'));
 
 module.exports = app;
