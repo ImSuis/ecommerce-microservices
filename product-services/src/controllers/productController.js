@@ -124,10 +124,41 @@ const deleteProduct = async (req, res) => {
   }
 };
 
+// STOCK UPDATE — internal use by order service only
+const updateStock = async (req, res) => {
+  const { quantity } = req.body;
+
+  try {
+    const product = await prisma.product.findUnique({
+      where: { id: req.params.id },
+    });
+
+    if (!product) {
+      return res.status(404).json({ success: false, message: 'Product not found' });
+    }
+
+    if (product.stock + quantity < 0) {
+      return res.status(400).json({ success: false, message: 'Insufficient stock' });
+    }
+
+    const updated = await prisma.product.update({
+      where: { id: req.params.id },
+      data: { stock: { increment: quantity } },
+    });
+
+    logger.info(`Stock updated for product ${req.params.id}: ${quantity}`);
+    res.json({ success: true, data: updated });
+  } catch (error) {
+    logger.error(`updateStock error: ${error.message}`);
+    res.status(500).json({ success: false, message: 'Server error' });
+  }
+};
+
 module.exports = {
   createProduct,
   getProducts,
   getProductById,
   updateProduct,
   deleteProduct,
+  updateStock,
 };

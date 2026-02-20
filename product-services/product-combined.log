@@ -11,3 +11,9 @@
 {"level":"info","message":"Products listed — page 1, total 2","timestamp":"2026-02-19T09:28:22.879Z"}
 {"level":"info","message":"Products listed — page 1, total 2","timestamp":"2026-02-19T09:28:28.535Z"}
 {"level":"info","message":"Products listed — page 1, total 4","timestamp":"2026-02-19T09:28:51.080Z"}
+{"level":"info","message":"Stock updated for product 5a4df25e-aee3-4bd2-85aa-ba8dcbf1bbf9: -2","timestamp":"2026-02-20T09:25:50.402Z"}
+{"level":"info","message":"Stock updated for product fc0b7c6e-98d2-47d0-bf00-a96bd0401486: -3","timestamp":"2026-02-20T09:25:50.407Z"}
+{"level":"info","message":"Stock updated for product 5a4df25e-aee3-4bd2-85aa-ba8dcbf1bbf9: 2","timestamp":"2026-02-20T09:44:47.273Z"}
+{"level":"info","message":"Stock updated for product fc0b7c6e-98d2-47d0-bf00-a96bd0401486: 3","timestamp":"2026-02-20T09:44:47.278Z"}
+{"level":"info","message":"Stock updated for product b38805ba-7c24-479b-a50a-1a0cd37f9436: -3","timestamp":"2026-02-20T09:50:30.130Z"}
+{"level":"info","message":"Stock updated for product ac1f0f92-5a93-492c-9d63-bf821a693b88: -6","timestamp":"2026-02-20T09:50:30.134Z"}

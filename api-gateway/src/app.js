@@ -12,10 +12,6 @@ app.use((req, res, next) => {
   next();
 });
 
-// NOTE: express.json() is intentionally omitted here.
-// Parsing the body in the gateway would consume the request stream,
-// leaving nothing for the proxy to forward to the microservice.
-
 app.use(
   '/api/auth',
   proxy({
@@ -82,6 +78,26 @@ app.use(
     target: process.env.CART_SERVICE_URL || 'http://localhost:4004',
     changeOrigin: true,
     pathRewrite: (path) => `/api/cart${path}`,
+    on: {
+      proxyReq: (proxyReq, req) => {
+        if (req.headers.authorization) {
+          proxyReq.setHeader('Authorization', req.headers.authorization);
+        }
+      },
+      error: (err, req, res) => {
+        console.error('Proxy error:', err);
+        res.status(502).json({ message: 'Proxy error', error: err.message });
+      },
+    },
+  })
+);
+
+app.use(
+  '/api/orders',
+  proxy({
+    target: process.env.ORDER_SERVICE_URL || 'http://localhost:4005',
+    changeOrigin: true,
+    pathRewrite: (path) => `/api/orders${path}`,
     on: {
       proxyReq: (proxyReq, req) => {
         if (req.headers.authorization) {
