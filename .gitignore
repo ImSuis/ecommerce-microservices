@@ -12,3 +12,4 @@ cart-services/.env
 order-services/node_modules
 order-services/.env
 *.log
+.env
