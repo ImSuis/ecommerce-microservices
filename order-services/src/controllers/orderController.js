@@ -198,10 +198,56 @@ const getAllOrders = async (req, res) => {
   }
 };
 
+const cancelOrder = async (req, res) => {
+  try {
+    const order = await prisma.order.findUnique({
+      where: { id: req.params.id },
+      include: { items: true },
+    });
+
+    if (!order) {
+      return res.status(404).json({ success: false, message: 'Order not found' });
+    }
+
+    if (order.userId !== req.user.id) {
+      return res.status(403).json({ success: false, message: 'Forbidden' });
+    }
+
+    if (order.status !== 'PENDING') {
+      return res.status(400).json({
+        success: false,
+        message: 'Order can only be cancelled while pending. Please contact support.',
+      });
+    }
+
+    // Restore stock
+    for (const item of order.items) {
+      await axios.patch(
+        `${PRODUCT_SERVICE_URL}/api/products/${item.productId}/stock`,
+        { quantity: item.quantity },
+        { headers: { 'x-internal-secret': process.env.INTERNAL_SECRET } }
+      );
+    }
+
+    const updated = await prisma.order.update({
+      where: { id: req.params.id },
+      data: { status: 'CANCELLED' },
+      include: { items: true },
+    });
+
+    logger.info(`Order ${order.id} cancelled by user ${req.user.id}`);
+    res.json({ success: true, data: updated });
+  } catch (error) {
+    logger.error(`cancelOrder error: ${error.message}`);
+    res.status(500).json({ success: false, message: 'Server error' });
+  }
+};
+
 module.exports = {
   placeOrder,
   getMyOrders,
   getOrderById,
   updateOrderStatus,
   getAllOrders,
+  cancelOrder
 };

@@ -7,6 +7,7 @@ const {
   getOrderById,
   updateOrderStatus,
   getAllOrders,
+  cancelOrder,
 } = require('../controllers/orderController');
 
 const router = express.Router();
@@ -14,6 +15,7 @@ const router = express.Router();
 router.post('/', authGuard, placeOrder);
 router.get('/my', authGuard, getMyOrders);
 router.get('/:id', authGuard, getOrderById);
+router.patch('/:id/cancel', authGuard, cancelOrder);
 
 // Admin only
 router.get('/', authGuard, adminGuard, getAllOrders);

@@ -33,3 +33,14 @@
 {"level":"info","message":"Cart updated for user: ba1b7fe3-475f-4a70-af32-964adfe09fda, productId: ac1f0f92-5a93-492c-9d63-bf821a693b88, quantity: 6","timestamp":"2026-02-20T09:49:47.156Z"}
 {"level":"info","message":"Cart fetched for user: ba1b7fe3-475f-4a70-af32-964adfe09fda","timestamp":"2026-02-20T09:50:30.014Z"}
 {"level":"info","message":"Cart cleared for user: ba1b7fe3-475f-4a70-af32-964adfe09fda","timestamp":"2026-02-20T09:50:30.139Z"}
+{"level":"info","message":"Cart fetched for user: c8f01315-02f1-4553-a239-091afb225173","timestamp":"2026-02-20T11:08:01.173Z"}
+{"level":"error","message":"Redis error: ","timestamp":"2026-02-20T17:49:21.490Z"}
+{"level":"error","message":"Redis error: ","timestamp":"2026-02-20T17:49:21.597Z"}
+{"level":"error","message":"Redis error: ","timestamp":"2026-02-20T17:49:21.749Z"}
+{"level":"error","message":"Redis error: ","timestamp":"2026-02-20T17:49:21.953Z"}
+{"level":"error","message":"Redis error: ","timestamp":"2026-02-20T17:49:22.208Z"}
+{"level":"error","message":"Redis error: ","timestamp":"2026-02-20T17:49:22.510Z"}
+{"level":"error","message":"Redis error: ","timestamp":"2026-02-20T17:49:22.863Z"}
+{"level":"error","message":"Redis error: ","timestamp":"2026-02-20T17:49:23.266Z"}
+{"level":"error","message":"Redis error: ","timestamp":"2026-02-20T17:49:23.718Z"}
+{"level":"error","message":"Redis error: ","timestamp":"2026-02-20T17:49:24.221Z"}
