@@ -1,0 +1,151 @@
+version: '3.9'
+
+services:
+  # ─── Infrastructure ───────────────────────────────────────────
+
+  postgres-auth:
+    image: postgres:16-alpine
+    container_name: postgres-auth
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: auth_db
+    ports:
+      - '5435:5432'
+    volumes:
+      - postgres-auth-data:/var/lib/postgresql/data
+
+  postgres-user:
+    image: postgres:16-alpine
+    container_name: postgres-user
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: user_db
+    ports:
+      - '5436:5432'
+    volumes:
+      - postgres-user-data:/var/lib/postgresql/data
+
+  postgres-product:
+    image: postgres:16-alpine
+    container_name: postgres-product
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: product_db
+    ports:
+      - '5437:5432'
+    volumes:
+      - postgres-product-data:/var/lib/postgresql/data
+
+  postgres-order:
+    image: postgres:16-alpine
+    container_name: postgres-order
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: order_db
+    ports:
+      - '5438:5432'
+    volumes:
+      - postgres-order-data:/var/lib/postgresql/data
+
+  redis:
+    image: redis:alpine
+    container_name: redis-cart
+    ports:
+      - '6379:6379'
+
+  # ─── Services ─────────────────────────────────────────────────
+
+  api-gateway:
+    build: ./api-gateway
+    container_name: api-gateway
+    ports:
+      - '3000:3000'
+    environment:
+      PORT: 3000
+      AUTH_SERVICE_URL: http://auth-service:4001
+      USER_SERVICE_URL: http://user-service:4002
+      PRODUCT_SERVICE_URL: http://product-service:4003
+      CART_SERVICE_URL: http://cart-service:4004
+      ORDER_SERVICE_URL: http://order-service:4005
+    depends_on:
+      - auth-service
+      - user-service
+      - product-service
+      - cart-service
+      - order-service
+
+  auth-service:
+    build: ./auth-services
+    container_name: auth-service
+    ports:
+      - '4001:4001'
+    environment:
+      PORT: 4001
+      DATABASE_URL: postgresql://postgres:postgres@postgres-auth:5432/auth_db
+      JWT_SECRET: your_jwt_secret
+    depends_on:
+      - postgres-auth
+
+  user-service:
+    build: ./user-services
+    container_name: user-service
+    ports:
+      - '4002:4002'
+    environment:
+      PORT: 4002
+      DATABASE_URL: postgresql://postgres:postgres@postgres-user:5432/user_db
+      JWT_SECRET: your_jwt_secret
+    depends_on:
+      - postgres-user
+
+  product-service:
+    build: ./product-services
+    container_name: product-service
+    ports:
+      - '4003:4003'
+    environment:
+      PORT: 4003
+      DATABASE_URL: postgresql://postgres:postgres@postgres-product:5432/product_db
+      JWT_SECRET: your_jwt_secret
+      INTERNAL_SECRET: your_internal_secret
+    depends_on:
+      - postgres-product
+
+  cart-service:
+    build: ./cart-services
+    container_name: cart-service
+    ports:
+      - '4004:4004'
+    environment:
+      PORT: 4004
+      REDIS_URL: redis://redis:6379
+      JWT_SECRET: your_jwt_secret
+    depends_on:
+      - redis
+
+  order-service:
+    build: ./order-services
+    container_name: order-service
+    ports:
+      - '4005:4005'
+    environment:
+      PORT: 4005
+      DATABASE_URL: postgresql://postgres:postgres@postgres-order:5432/order_db
+      JWT_SECRET: your_jwt_secret
+      INTERNAL_SECRET: your_internal_secret
+      PRODUCT_SERVICE_URL: http://product-service:4003
+      CART_SERVICE_URL: http://cart-service:4004
+    depends_on:
+      - postgres-order
+      - product-service
+      - cart-service
+
+volumes:
+  postgres-auth-data:
+  postgres-user-data:
+  postgres-product-data:
+  postgres-order-data:
