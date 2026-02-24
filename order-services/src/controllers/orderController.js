@@ -6,6 +6,7 @@ const { getChannel } = require('../config/rabbitmq');
 const PRODUCT_SERVICE_URL = process.env.PRODUCT_SERVICE_URL || 'http://localhost:4003';
 const CART_SERVICE_URL = process.env.CART_SERVICE_URL || 'http://localhost:4004';
 const USER_SERVICE_URL = process.env.USER_SERVICE_URL || 'http://localhost:4002';
+const AUTH_SERVICE_URL = process.env.AUTH_SERVICE_URL || 'http://localhost:4001';
 
 const placeOrder = async (req, res) => {
   const userId = req.user.id;
@@ -208,19 +209,25 @@ const updateOrderStatus = async (req, res) => {
       include: { items: true },
     });
 
-    // Publish status updated event
+    // Fetch order owner email from auth service
+    const userResponse = await axios.get(
+      `${AUTH_SERVICE_URL}/api/auth/users/${order.userId}`,
+      { headers: { 'x-internal-secret': process.env.INTERNAL_SECRET } }
+    );
+    const ownerEmail = userResponse.data.data.email;
+
+    // Publish status updated event with owner email
     const channel = getChannel();
     if (channel) {
       channel.sendToQueue(
         'order.status.updated',
         Buffer.from(JSON.stringify({
           orderId: updated.id,
-          email: req.user.email,
+          email: ownerEmail, // owner email not admin email
           status: updated.status,
         })),
         { persistent: true }
       );
-      logger.info(`order.status.updated event published for order: ${updated.id}`);
     }
 
     logger.info(`Order ${req.params.id} status updated to ${status} by admin ${req.user.id}`);

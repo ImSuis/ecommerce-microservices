@@ -83,6 +83,7 @@ services:
       PORT: 4001
       DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres-auth:5432/auth_db
       JWT_SECRET: ${JWT_SECRET}
+      INTERNAL_SECRET: ${INTERNAL_SECRET}
     depends_on:
       - postgres-auth
 
@@ -136,6 +137,7 @@ services:
       USER_SERVICE_URL: http://user-service:4002
       PRODUCT_SERVICE_URL: http://product-service:4003
       CART_SERVICE_URL: http://cart-service:4004
+      AUTH_SERVICE_URL: http://auth-service:4001
       RABBITMQ_URL: amqp://guest:guest@rabbitmq:5672
     depends_on:
       - postgres-order
