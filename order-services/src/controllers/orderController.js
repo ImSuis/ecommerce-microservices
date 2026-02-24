@@ -147,6 +147,15 @@ const getOrderById = async (req, res) => {
 const updateOrderStatus = async (req, res) => {
   const { status } = req.body;
 
+  // Define valid transitions
+  const validTransitions = {
+    PENDING: ['CONFIRMED', 'CANCELLED'],
+    CONFIRMED: ['SHIPPED', 'CANCELLED'],
+    SHIPPED: ['DELIVERED'],
+    DELIVERED: [],
+    CANCELLED: [],
+  };
+
   try {
     const order = await prisma.order.findUnique({
       where: { id: req.params.id },
@@ -157,12 +166,21 @@ const updateOrderStatus = async (req, res) => {
       return res.status(404).json({ success: false, message: 'Order not found' });
     }
 
-    // Restore stock if cancelling an order that was not already cancelled
-    if (status === 'CANCELLED' && order.status !== 'CANCELLED') {
+    // Check if transition is valid
+    const allowed = validTransitions[order.status];
+    if (!allowed.includes(status)) {
+      return res.status(400).json({
+        success: false,
+        message: `Cannot transition from ${order.status} to ${status}`,
+      });
+    }
+
+    // Restore stock if cancelling
+    if (status === 'CANCELLED') {
       for (const item of order.items) {
         await axios.patch(
           `${PRODUCT_SERVICE_URL}/api/products/${item.productId}/stock`,
-          { quantity: item.quantity }, // positive to restore
+          { quantity: item.quantity },
           { headers: { 'x-internal-secret': process.env.INTERNAL_SECRET } }
         );
       }
