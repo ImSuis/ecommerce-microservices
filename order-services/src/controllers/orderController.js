@@ -1,6 +1,7 @@
 const axios = require('axios');
 const prisma = require('../prismaClient');
 const logger = require('../logger/logger');
+const { getChannel } = require('../config/rabbitmq');
 
 const PRODUCT_SERVICE_URL = process.env.PRODUCT_SERVICE_URL || 'http://localhost:4003';
 const CART_SERVICE_URL = process.env.CART_SERVICE_URL || 'http://localhost:4004';
@@ -94,7 +95,24 @@ const placeOrder = async (req, res) => {
     await axios.delete(`${CART_SERVICE_URL}/api/cart/clear`, {
       headers: { Authorization: token },
     });
-
+    // 8. Publish order placed event
+    const channel = getChannel();
+    if (channel) {
+      channel.sendToQueue(
+        'order.placed',
+        Buffer.from(JSON.stringify({
+          orderId: order.id,
+          email: req.user.email,
+          items: order.items,
+          total: order.total,
+          street: order.street,
+          city: order.city,
+          country: order.country,
+        })),
+        { persistent: true }
+      );
+      logger.info(`order.placed event published for order: ${order.id}`);
+    }
     logger.info(`Order placed: ${order.id} by user: ${userId}`);
     res.status(201).json({ success: true, data: order });
   } catch (error) {
@@ -143,11 +161,9 @@ const getOrderById = async (req, res) => {
   }
 };
 
-// UPDATE ORDER STATUS — admin only
 const updateOrderStatus = async (req, res) => {
   const { status } = req.body;
 
-  // Define valid transitions
   const validTransitions = {
     PENDING: ['CONFIRMED', 'CANCELLED'],
     CONFIRMED: ['SHIPPED', 'CANCELLED'],
@@ -166,7 +182,6 @@ const updateOrderStatus = async (req, res) => {
       return res.status(404).json({ success: false, message: 'Order not found' });
     }
 
-    // Check if transition is valid
     const allowed = validTransitions[order.status];
     if (!allowed.includes(status)) {
       return res.status(400).json({
@@ -192,6 +207,21 @@ const updateOrderStatus = async (req, res) => {
       data: { status },
       include: { items: true },
     });
+
+    // Publish status updated event
+    const channel = getChannel();
+    if (channel) {
+      channel.sendToQueue(
+        'order.status.updated',
+        Buffer.from(JSON.stringify({
+          orderId: updated.id,
+          email: req.user.email,
+          status: updated.status,
+        })),
+        { persistent: true }
+      );
+      logger.info(`order.status.updated event published for order: ${updated.id}`);
+    }
 
     logger.info(`Order ${req.params.id} status updated to ${status} by admin ${req.user.id}`);
     res.json({ success: true, data: updated });

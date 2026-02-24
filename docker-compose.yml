@@ -136,13 +136,41 @@ services:
       USER_SERVICE_URL: http://user-service:4002
       PRODUCT_SERVICE_URL: http://product-service:4003
       CART_SERVICE_URL: http://cart-service:4004
+      RABBITMQ_URL: amqp://guest:guest@rabbitmq:5672
     depends_on:
       - postgres-order
       - product-service
       - cart-service
+      - rabbitmq
+  
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    container_name: rabbitmq
+    ports:
+      - '5672:5672'   # message broker port
+      - '15672:15672' # management UI port
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    volumes:
+      - rabbitmq-data:/var/lib/rabbitmq
+  
+  notification-service:
+    build: ./notification-services
+    container_name: notification-service
+    environment:
+      RABBITMQ_URL: amqp://guest:guest@rabbitmq:5672
+      EMAIL_HOST: smtp.gmail.com
+      EMAIL_PORT: 587
+      EMAIL_USER: ${EMAIL_USER}
+      EMAIL_PASS: ${EMAIL_PASS}
+      EMAIL_FROM: ${EMAIL_FROM}
+    depends_on:
+      - rabbitmq
 
 volumes:
   postgres-auth-data:
   postgres-user-data:
   postgres-product-data:
   postgres-order-data:
+  rabbitmq-data:

@@ -13,3 +13,5 @@ order-services/node_modules
 order-services/.env
 *.log
 .env
+notification-services/node_modules
+notification-services/.env
