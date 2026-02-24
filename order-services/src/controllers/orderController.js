@@ -4,11 +4,17 @@ const logger = require('../logger/logger');
 
 const PRODUCT_SERVICE_URL = process.env.PRODUCT_SERVICE_URL || 'http://localhost:4003';
 const CART_SERVICE_URL = process.env.CART_SERVICE_URL || 'http://localhost:4004';
+const USER_SERVICE_URL = process.env.USER_SERVICE_URL || 'http://localhost:4002';
 
-// PLACE ORDER
 const placeOrder = async (req, res) => {
   const userId = req.user.id;
   const token = req.headers.authorization;
+  const { addressId } = req.body;
+
+  // Validate addressId is provided
+  if (!addressId) {
+    return res.status(400).json({ success: false, message: 'Delivery address is required' });
+  }
 
   try {
     // 1. Fetch cart from cart service
@@ -22,7 +28,19 @@ const placeOrder = async (req, res) => {
       return res.status(400).json({ success: false, message: 'Cart is empty' });
     }
 
-    // 2. Check stock and decrement for each item
+    // 2. Fetch user profile and validate address belongs to user
+    const profileResponse = await axios.get(`${USER_SERVICE_URL}/api/users/profile`, {
+      headers: { Authorization: token },
+    });
+
+    const profile = profileResponse.data.data;
+    const address = profile.addresses.find((a) => a.id === addressId);
+
+    if (!address) {
+      return res.status(400).json({ success: false, message: 'Invalid delivery address' });
+    }
+
+    // 3. Check stock for each item
     for (const item of cart.items) {
       const productResponse = await axios.get(
         `${PRODUCT_SERVICE_URL}/api/products/${item.productId}`
@@ -37,17 +55,20 @@ const placeOrder = async (req, res) => {
       }
     }
 
-    // 3. Calculate total
+    // 4. Calculate total
     const total = cart.items.reduce(
       (sum, item) => sum + item.price * item.quantity,
       0
     );
 
-    // 4. Create order in DB
+    // 5. Create order with snapshotted address
     const order = await prisma.order.create({
       data: {
         userId,
         total,
+        street: address.street,
+        city: address.city,
+        country: address.country,
         items: {
           create: cart.items.map((item) => ({
             productId: item.productId,
@@ -60,16 +81,16 @@ const placeOrder = async (req, res) => {
       include: { items: true },
     });
 
-    // 5. Decrement stock in product service
+    // 6. Decrement stock in product service
     for (const item of cart.items) {
-    await axios.patch(
+      await axios.patch(
         `${PRODUCT_SERVICE_URL}/api/products/${item.productId}/stock`,
         { quantity: -item.quantity },
         { headers: { 'x-internal-secret': process.env.INTERNAL_SECRET } }
-    );
+      );
     }
 
-    // 6. Clear cart
+    // 7. Clear cart
     await axios.delete(`${CART_SERVICE_URL}/api/cart/clear`, {
       headers: { Authorization: token },
     });

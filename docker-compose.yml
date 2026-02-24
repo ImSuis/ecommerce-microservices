@@ -133,6 +133,7 @@ services:
       DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres-order:5432/order_db
       JWT_SECRET: ${JWT_SECRET}
       INTERNAL_SECRET: ${INTERNAL_SECRET}
+      USER_SERVICE_URL: http://user-service:4002
       PRODUCT_SERVICE_URL: http://product-service:4003
       CART_SERVICE_URL: http://cart-service:4004
     depends_on:
