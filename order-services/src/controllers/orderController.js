@@ -178,7 +178,7 @@ const updateOrderStatus = async (req, res) => {
       where: { id: req.params.id },
       include: { items: true },
     });
-
+ 
     if (!order) {
       return res.status(404).json({ success: false, message: 'Order not found' });
     }
@@ -311,6 +311,21 @@ const cancelOrder = async (req, res) => {
       include: { items: true },
     });
 
+    // Publish cancellation event — user is making the request so req.user.email is correct
+    const channel = getChannel();
+    if (channel) {
+      channel.sendToQueue(
+        'order.status.updated',
+        Buffer.from(JSON.stringify({
+          orderId: updated.id,
+          email: req.user.email,
+          status: 'CANCELLED',
+        })),
+        { persistent: true }
+      );
+      logger.info(`order.status.updated event published for cancelled order: ${updated.id}`);
+    }
+
     logger.info(`Order ${order.id} cancelled by user ${req.user.id}`);
     res.json({ success: true, data: updated });
   } catch (error) {
@@ -318,7 +333,6 @@ const cancelOrder = async (req, res) => {
     res.status(500).json({ success: false, message: 'Server error' });
   }
 };
-
 module.exports = {
   placeOrder,
   getMyOrders,
